@@ -12,4 +12,8 @@
     <ProjectReference Include="..\DinamikCRM.Entity\DinamikCRM.Entity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>

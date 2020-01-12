@@ -5,6 +5,7 @@ using DinamikCRM.Entity.Models.DB;
 using DinamikCRM.Repository;
 using DinamikCRM.Repository.Model;
 using DinamikCRM.Repository.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DinamikCRM.WebApi.Controllers
@@ -15,17 +16,21 @@ namespace DinamikCRM.WebApi.Controllers
     {
 
         private readonly IRepository<TblCustomer> _customerRepository;
-
+     
+     
         private readonly ICustomerService _customerService;
         public CustomerController(IRepository<TblCustomer> customerRepository, ICustomerService customerService)
         {
+          
+          
             _customerService = customerService;
             _customerRepository = customerRepository;
         }
-
+            
         [HttpGet("GetById/{id}")]
         public ServiceResponse<TblCustomer> GetByID(int id)
         {
+
             var response = new ServiceResponse<TblCustomer>
             {
                 Entity = _customerRepository.GetById(id),
@@ -63,7 +68,7 @@ namespace DinamikCRM.WebApi.Controllers
         {
             var response = new ServiceResponse<TblCustomer>();
             if (!ModelState.IsValid || tblCustomer == null) return BadRequest();
-
+         
             _customerRepository.Insert(tblCustomer);
             response.Entity = tblCustomer;
             response.IsSuccessful = true;
@@ -124,6 +129,9 @@ namespace DinamikCRM.WebApi.Controllers
         {
 
             if (!ModelState.IsValid || tblCustomerAddress == null) return BadRequest();
+
+            tblCustomerAddress.GroupId = Convert.ToInt32(HttpContext.Items["groupId"].ToString());
+            tblCustomerAddress.UserId = Convert.ToInt32(HttpContext.Items["groupId"].ToString());
             var response = new ServiceResponse<TblCustomerAddress>
             {
                 Entity = tblCustomerAddress,

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using DinamikCRM.Repository.Service;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using DinamikCRM.WebApi.Extansions;
 
 namespace DinamikCRM.WebApi
 {
@@ -88,6 +89,7 @@ namespace DinamikCRM.WebApi
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+            app.UseCheckCustomerMiddleware();
 
             app.UseAuthentication();
             app.UseMvc();
