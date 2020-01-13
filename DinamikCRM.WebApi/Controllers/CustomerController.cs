@@ -131,7 +131,7 @@ namespace DinamikCRM.WebApi.Controllers
             if (!ModelState.IsValid || tblCustomerAddress == null) return BadRequest();
 
             tblCustomerAddress.GroupId = Convert.ToInt32(HttpContext.Items["groupId"].ToString());
-            tblCustomerAddress.UserId = Convert.ToInt32(HttpContext.Items["groupId"].ToString());
+            tblCustomerAddress.UserId = Convert.ToInt32(HttpContext.Items["userId"].ToString());
             var response = new ServiceResponse<TblCustomerAddress>
             {
                 Entity = tblCustomerAddress,

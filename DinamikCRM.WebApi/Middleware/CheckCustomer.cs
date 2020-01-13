@@ -21,28 +21,35 @@ namespace DinamikCRM.WebApi.Middleware
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var key1 = httpContext.Request.Headers.Keys.Contains("ApiKey");
-            var key2 = httpContext.Request.Headers.Keys.Contains("ApiSecret");
-            
-            if (!key1 || !key2)
+            if (!httpContext.Request.Path.ToString().Contains("swagger"))
             {
-                httpContext.Response.StatusCode = 400;
-                await httpContext.Response.WriteAsync("Missing requeired keys!");
-                return;
+                var key1 = httpContext.Request.Headers.Keys.Contains("ApiKey");
+                var key2 = httpContext.Request.Headers.Keys.Contains("ApiSecret");
+
+                if (!key1 || !key2)
+                {
+                    httpContext.Response.StatusCode = 400;
+                    await httpContext.Response.WriteAsync("Missing requeired keys!");
+                    return;
+                }
+                else
+                {
+                    var apiKey = httpContext.Request.Headers["ApiKey"].ToString();
+                    var apiSecret = httpContext.Request.Headers["ApiSecret"].ToString();
+
+                    var customer = _groupApiRepository.Table.FirstOrDefault(m => m.ApiKey == apiKey && m.ApiSecret == apiSecret);
+                    if (customer == null)
+                    {
+                        await httpContext.Response.WriteAsync("ApiKey or ApiSecret is wrong.");
+                        return;
+                    }
+                    httpContext.Items.Add("groupId", customer.GroupId);
+                    httpContext.Items.Add("userId", customer.UserId);
+
+
+                }
             }
-            else
-            {
-                var apiKey = httpContext.Request.Headers["ApiKey"].ToString();
-                var apiSecret = httpContext.Request.Headers["ApiSecret"].ToString();
-
-                var customer = _groupApiRepository.TableNoTracking.FirstOrDefault(m => m.ApiKey == apiKey && m.ApiSecret==apiSecret);
-
-             
-                httpContext.Items.Add("groupId", customer.GroupId);
-                httpContext.Items.Add("userId", customer.UserId);
-
-
-            }
+           
             await _next.Invoke(httpContext);
         }
     }
